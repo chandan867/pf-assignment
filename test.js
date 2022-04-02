@@ -105,15 +105,36 @@ for (let i = 0; i < modified_expenditure.length; i++) {
       startDate: modified_expenditure[i].startDate,
     });
 }
-
 ans.sort(function (a, b) {
   return new Date(a.startDate) - new Date(b.startDate);
 });
 
-console.log(ans);
+/// adding 0 to the missing months of the year
+final_ans = [ans[0]];
+for (let i = 1; i < ans.length; i++) {
+  let diff =
+    ans[i].startDate.split("-")[1] - ans[i - 1].startDate.split("-")[1] - 1;
+  if (diff > 0) {
+    let month = ans[i].startDate.split("-")[1];
+    while (diff) {
+      let new_month = ans[i].startDate.split("-")[1] - diff;
+      if (new_month < 10) new_month = "0" + new_month;
+      let new_date =
+        ans[i].startDate.split("-")[0] +
+        "-" +
+        new_month +
+        "-" +
+        ans[i].startDate.split("-")[2];
+      final_ans.push({
+        amount: 0,
+        startDate: new_date,
+      });
+      diff--;
+    }
+    final_ans.push(ans[i]);
+  } else {
+    final_ans.push(ans[i]);
+  }
+}
 
-
-//this code can be optimized if we use some database to store data because we can query using aggregate functions. Like in MongoDB there is
-// timeSeries data collection which can be used for such purposes
-
-//will try to add 0 to the missing months in coming git commits
+console.log(final_ans);
